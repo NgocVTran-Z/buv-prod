@@ -1,0 +1,41 @@
+trip_id,stop_sequence,stop_name,stop_time
+1,1,Le Dai Hanh,07:40:00
+1,2,Time City,07:55:00
+1,3,Aeon Mall Long Bien,08:05:00
+1,4,Rung Co - E2 Building,08:20:00
+1,5,BUV Campus,08:25:00
+2,1,Le Dai Hanh,09:40:00
+2,2,Time City,09:55:00
+2,3,Aeon Mall Long Bien,10:05:00
+2,4,Rung Co - E2 Building,10:20:00
+2,5,BUV Campus,10:25:00
+3,1,Le Dai Hanh,10:40:00
+3,2,Time City,10:55:00
+3,3,Aeon Mall Long Bien,11:05:00
+3,4,Rung Co - E2 Building,11:20:00
+3,5,BUV Campus,11:25:00
+4,1,Le Dai Hanh,12:00:00
+4,2,Time City,12:15:00
+4,3,Aeon Mall Long Bien,12:25:00
+4,4,Rung Co - E2 Building,12:35:00
+4,5,BUV Campus,12:40:00
+5,1,Le Dai Hanh,13:30:00
+5,2,Time City,13:45:00
+5,3,Aeon Mall Long Bien,13:55:00
+5,4,Rung Co - E2 Building,14:10:00
+5,5,BUV Campus,14:15:00
+6,1,Nguyen Quoc Tri,07:00:00
+6,2,National Cinema Center,07:15:00
+6,3,BUV Campus,08:05:00
+7,1,Nguyen Quoc Tri,09:30:00
+7,2,National Cinema Center,09:45:00
+7,3,BUV Campus,10:35:00
+8,1,Nguyen Quoc Tri,10:25:00
+8,2,National Cinema Center,10:40:00
+8,3,BUV Campus,11:30:00
+9,1,Nguyen Quoc Tri,11:40:00
+9,2,National Cinema Center,11:55:00
+9,3,BUV Campus,12:45:00
+10,1,Nguyen Quoc Tri,13:30:00
+10,2,National Cinema Center,13:45:00
+10,3,BUV Campus,14:35:00

@@ -1,0 +1,1 @@
+{"lc": 1, "type": "constructor", "id": ["langchain", "schema", "document", "Document"], "kwargs": {"page_content": "## 6\\. Student Engagement Department  \nEmail: se@buv.edu.vn  \n(For any questions about any PSG activity offered by Student Engagement Department)", "metadata": {"file_name": "PSG Programme Handbook.pdf", "page": "15"}, "type": "Document"}}
