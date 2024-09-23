@@ -16,33 +16,28 @@ from chains.Mentioned import *
 # from connect_db import *
 # from SQLAgent import *
 
+from utilize.utils import get_the_latest_sheet, get_the_starting_time
+
 import pandas as pd
 from dotenv import load_dotenv, find_dotenv
 
 load_dotenv(find_dotenv("../application/.env"))
-bus_schedule_file = os.getenv("BUS_SCHEDULE_FILE")
+# bus_schedule_file = os.getenv("BUS_SCHEDULE_FILE")
+
+BUS_SCHEDULE_FILE = os.getenv("BUS_SCHEDULE_FILE")
+df, latest_sheet = get_the_latest_sheet(BUS_SCHEDULE_FILE)
+
 
 if "context" not in st.session_state:
     st.session_state.context = ""
-    
+
 # filepath = os.getenv("STARTING_TIME_FILE")
 # df_bus = pd.read_csv(filepath)
-# # Get the list of sheet names
-# sheet_names = pd.ExcelFile(bus_schedule_file).sheet_names
-# # Pick the latest sheet
-# latest_sheet = sheet_names[-1]
-# # Load the data from the latest sheet
-# df = pd.read_excel(bus_schedule_file, sheet_name=latest_sheet)
-# df_calendar = df.iloc[8:, :]
 
-filepath = os.getenv("STARTING_TIME_FILE")
-df_bus = pd.read_csv(filepath)
-# Get the list of sheet names
-sheet_names = pd.ExcelFile(bus_schedule_file).sheet_names
-# Pick the latest sheet
-latest_sheet = sheet_names[-1]
-# Load the data from the latest sheet
-df = pd.read_excel(bus_schedule_file, sheet_name=latest_sheet)
+STARTING_TIME_FILE = os.getenv("STARTING_TIME_FILE")
+df_bus = get_the_starting_time(STARTING_TIME_FILE)
+
+
 df_calendar = df.iloc[8:, :]
 
 def get_busschedule_ans(prompt):
