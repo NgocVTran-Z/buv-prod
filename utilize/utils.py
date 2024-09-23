@@ -38,7 +38,7 @@ def get_the_latest_sheet(prefix_filename: str = "Bus_schedules_for_Chatbot"):
     
     latest_sheet = excel_file.sheet_names[-1]
     
-    df = pd.read_excel(bus_schedule_blob_name, sheet_name=latest_sheet)
+    df = pd.read_excel(excel_file, sheet_name=latest_sheet)
     
     return df, latest_sheet
 
@@ -62,5 +62,12 @@ def get_the_starting_time(filename: str = "StartingTime.csv"):
     # Read CSV data with pandas
     df = pd.read_csv(StringIO(blob_data_str))
     
+    # Strip leading and trailing whitespaces from columns "route_name", "pickup_point", "dropoff_point"
+    df["route_name"] = df["route_name"].str.strip()
+    df["pickup_point"] = df["pickup_point"].str.strip()
+    df["dropoff_point"] = df["dropoff_point"].str.strip()
+    
     return df
+
+    
     

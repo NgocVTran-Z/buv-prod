@@ -305,15 +305,15 @@ def generate_dropoff_point(state):
     #     return []
 
 
-def generate_specific_date(state) -> List:
-    # Get the list of sheet names
-    sheet_names = pd.ExcelFile(bus_schedule_file).sheet_names
+def generate_specific_date(state) -> List:    
+    # # Get the list of sheet names
+    # sheet_names = pd.ExcelFile(bus_schedule_file).sheet_names
 
-    # Pick the latest sheet
-    latest_sheet = sheet_names[-1]
+    # # Pick the latest sheet
+    # latest_sheet = sheet_names[-1]
 
-    # Load the data from the latest sheet
-    df = pd.read_excel(bus_schedule_file, sheet_name=latest_sheet)
+    # # Load the data from the latest sheet
+    # df = pd.read_excel(bus_schedule_file, sheet_name=latest_sheet)
 
     # Get a list of datetime elements in the first column, skipping nan values and str type
     datetimes = df.iloc[:, 0].dropna().loc[lambda x: x.apply(lambda y: not isinstance(y, str))].reset_index(drop=True)
@@ -348,6 +348,7 @@ def generate_specific_time(state):
     dropoff_point = state["drop-off point"][0]
     specific_date = state["specific date"][0]
 
+    print(f"{route_name=}, {pickup_point=}, {dropoff_point=}, {specific_date=}")
     # if there is a route name
     if is_empty_or_none(state["route name"])==False:
 
@@ -361,13 +362,17 @@ def generate_specific_time(state):
             # then return starting time of this pickup point only
             print("---------get suggest time here--------------")
             weekday = specific_date.split()[0]
+            print(f"{weekday=}")
             result_calendar = df_calendar[(df_calendar["Unnamed: 1"]==weekday)
                             & (df_calendar["Unnamed: 2"]==dct_excel_mapping[route_name])]
+            print(f"{result_calendar=}")
             result_calendar.columns = [str(i) for i in range(0, 14)]
+            print(f"{df_bus=}")
             result = df_bus[(df_bus["route_name"]==route_name) \
                 & (df_bus["pickup_point"] == pickup_point)
                 & (df_bus["dropoff_point"] == dropoff_point)]
 
+            print(f"{result=}")
             suggestion = gen_available_timeslot(pickup_point, result_calendar, result)
             print("suggestion:", suggestion)
             return suggestion
