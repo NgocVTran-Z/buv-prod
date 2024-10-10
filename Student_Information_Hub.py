@@ -405,7 +405,7 @@ with st.container():
                             
                             paraphrased_prompt = paraphraser.invoke(prompt)
                             stream_response = stream(bot_engine,
-                                {"input": prompt},
+                                {"input": paraphrased_prompt},
                                 {"configurable": {"session_id": "unused"}},
                             )
                             print("stream_response", stream_response)
