@@ -5,7 +5,7 @@ annotated-types==0.7.0
 anthropic==0.32.0
 anyio==4.4.0
 appnope==0.1.4
-appscript==1.2.5
+# appscript==1.2.5
 asgiref==3.8.1
 asttokens==2.4.1
 async-timeout==4.0.3
