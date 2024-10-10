@@ -73,6 +73,7 @@ contextualized_system_prompt = (
 
 contextualized_template = ChatPromptTemplate.from_messages(
     [
+        # MessagesPlaceholder(variable_name="chat_history"),
         MessagesPlaceholder(variable_name="chat_history"),
         ("human", "{input}"),
         ("human", contextualized_system_prompt),
@@ -254,10 +255,10 @@ def chain_with_follow_up_function(message_history):
                             output_messages_key="answer"
                             )
     
-    # chain_with_follow_up = (
-    #                         RunnablePassthrough.assign(messages_trimmed=trim_messages)
-    #                         | conversational_rag_chain
-    #                         )
-    return conversational_rag_chain
-    # return chain_with_follow_up
+    chain_with_follow_up = (
+                            RunnablePassthrough.assign(messages_trimmed=trim_messages)
+                            | conversational_rag_chain
+                            )
+    # return conversational_rag_chain
+    return chain_with_follow_up
     

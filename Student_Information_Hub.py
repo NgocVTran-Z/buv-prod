@@ -1,4 +1,5 @@
 from backend import buv_with_direct_prompting_source_and_follow_up, su_with_direct_prompting_source_and_follow_up
+from backend.buv_with_direct_prompting_source_and_follow_up import paraphraser
 from backend.utils import language_detection_chain, azure_openai, text_embedding_3large, retriever, FAQ
 from upload_file import upload_to_blob_storage, processing_uploaded_file
 from langchain_core.output_parsers import StrOutputParser
@@ -401,6 +402,8 @@ with st.container():
                             #     {"input": prompt},
                             #     {"configurable": {"session_id": "unused"}},
                             # )
+                            
+                            paraphrased_prompt = paraphraser.invoke(prompt)
                             stream_response = stream(bot_engine,
                                 {"input": prompt},
                                 {"configurable": {"session_id": "unused"}},
