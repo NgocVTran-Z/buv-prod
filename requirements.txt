@@ -27,7 +27,7 @@ charset-normalizer==3.3.2
 chroma-hnswlib==0.7.6
 chromadb==0.5.5
 click==8.1.7
-colbert-ai==0.2.19
+# colbert-ai==0.2.19
 coloredlogs==15.0.1
 comm==0.2.2
 contourpy==1.2.1
@@ -194,7 +194,7 @@ pynndescent==0.5.13
 pynvml==11.5.3
 pyparsing==3.1.2
 pypdf==4.3.1
-PyPika==0.48.9
+# PyPika==0.48.9
 pyproject_hooks==1.1.0
 # pysqlite3==0.5.3
 pysqlite3-binary
