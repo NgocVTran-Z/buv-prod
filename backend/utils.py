@@ -78,19 +78,19 @@ AZURE_OPENAI_ENDPOINT = os.getenv('AZURE_OPENAI_ENDPOINT')
 # )
 
 # -----------Production-----------
-azure_openai = AzureChatOpenAI(
-    # openai_api_version="2023-05-15",
-    openai_api_version="2024-05-01-preview",
-    azure_deployment="Chat_Models",
-    temperature=0
-)
-
 # azure_openai = AzureChatOpenAI(
 #     # openai_api_version="2023-05-15",
-#     openai_api_version="2024-02-15-preview",
-#     azure_deployment="Chat_Models_4o_mini",
+#     openai_api_version="2024-05-01-preview",
+#     azure_deployment="Chat_Models",
 #     temperature=0
 # )
+
+azure_openai = AzureChatOpenAI(
+    # openai_api_version="2023-05-15",
+    openai_api_version="2024-02-15-preview",
+    azure_deployment="Chat_Models_4o_mini",
+    temperature=0
+)
 
 # azure_openai = AzureChatOpenAI(
 #     # openai_api_version="2023-05-15",
@@ -165,11 +165,6 @@ Respond with only one word.
 
 Language:"""
 
-# language_detection_chain = (
-#     PromptTemplate.from_template(language_detection_prompt_template)
-#     | gpt_4o
-#     | StrOutputParser()
-# )
 language_detection_chain = (
     PromptTemplate.from_template(language_detection_prompt_template)
     | azure_openai

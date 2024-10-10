@@ -265,6 +265,31 @@ for msg in st.session_state.messages_of_sio_follow_up:
         st.chat_message(
             msg["role"], avatar="./images/Starleo-13.png").write(msg["content"])
 
+from langchain_core.runnables.config import RunnableConfig
+from typing import Optional, Iterator, Any
+from langchain_core.runnables.utils import Input, Output
+
+def stream(
+    chain,
+    input: Input,
+    config: Optional[RunnableConfig] = None,
+    **kwargs: Optional[Any],
+) -> Iterator[Output]:
+    """
+    Default implementation of stream, which calls invoke.
+    Subclasses should override this method if they support streaming output.
+
+    Args:
+        input: The input to the Runnable.
+        config: The config to use for the Runnable. Defaults to None.
+        **kwargs: Additional keyword arguments to pass to the Runnable.
+
+    Yields:
+        The output of the Runnable.
+    """
+    yield chain.invoke(input, config, **kwargs)['answer']
+
+
 with st.container():
     # Create a 2 column layout
     col4, col5 = st.columns([0.85, 0.15])
@@ -371,12 +396,17 @@ with st.container():
                             #                                          "chat_history": buv_with_direct_prompting_source_and_follow_up.demo_ephemeral_chat_history.messages})
                             # print(
                             #     f"Latest question: {prompt} \nNew query: {q_with_context}")
-                            stream_response = bot_engine.stream(
+                            # stream_response = bot_engine.stream(
+                            #     {"input": prompt},
+                            #     {"configurable": {"session_id": "unused"}},
+                            # )
+                            stream_response = stream(bot_engine,
                                 {"input": prompt},
                                 {"configurable": {"session_id": "unused"}},
                             )
                             print("stream_response", stream_response)
                             response = st.write_stream(stream_response)
+                            # response = st.write_stream(stream_response['answer'])
 
                 st.session_state.messages_of_sio_follow_up.append(
                     {"role": "assistant", "content": fixed_answer + "\n\n" + response})
