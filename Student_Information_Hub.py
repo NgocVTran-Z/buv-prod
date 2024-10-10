@@ -160,6 +160,7 @@ def delete_messages_session_state():
     Delete the 'messages_of_sio_follow_up' key from the session state if it exists.
     """
     st.session_state.pop("messages_of_sio_follow_up", None)
+    st.session_state.pop("buv_follow_up_memory", None)
         
 with st.chat_message("assistant", avatar="./images/Starleo-03.png"):
     st.write("Hi, I’m StarLeo, I’m happy to assist you!")
@@ -249,8 +250,8 @@ if bot_name == "Staffordshire University":
         message_history)
     fixed_answer = "For SU students:"
 else:
-    # message_history = StreamlitChatMessageHistory(key="buv_follow_up_memory")
-    message_history = StreamlitChatMessageHistory(key="chat_history")
+    message_history = StreamlitChatMessageHistory(key="buv_follow_up_memory")
+    # message_history = StreamlitChatMessageHistory(key="chat_history")
     bot_engine = buv_with_direct_prompting_source_and_follow_up.chain_with_follow_up_function(
         message_history)
     fixed_answer = "For BUV students:"
@@ -404,6 +405,12 @@ with st.container():
                             # )
                             
                             paraphrased_prompt = paraphraser.invoke(prompt)
+                            # Trimming history messages
+                            print("Trimming history messages")
+                            n_history_conversations = 4
+                            message_history.messages = message_history.messages[-2*n_history_conversations:] if len(message_history.messages) > 2*n_history_conversations else message_history.messages
+                            print("history messages:", message_history.messages)
+                            
                             stream_response = stream(bot_engine,
                                 {"input": paraphrased_prompt},
                                 {"configurable": {"session_id": "unused"}},

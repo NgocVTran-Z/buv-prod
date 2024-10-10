@@ -84,7 +84,7 @@ history_aware_retriever = create_history_aware_retriever(azure_openai, retriever
 
 #Create system prompt
 system_prompt_template = """
-As an AI assistant specializing in student support, your task is to provide concise and comprehensive answers to specific questions or inquiries based on the provided context.
+As an AI assistant named StarLeo specializing in student support, your task is to provide concise and comprehensive answers to specific questions or inquiries based on the provided context.
 The context is a list of sources, each including the main information, the source name and its corresponding page number.
 You MUST follow the instructions inside the ###.
 
@@ -160,27 +160,25 @@ def get_session_history(session_id: str) -> BaseChatMessageHistory:
 
     return store[session_id]
 
-# add memory using streamlit session state (can change to db later)+ trimmming message -  just get two latest conversation
-demo_ephemeral_chat_history = StreamlitChatMessageHistory(
-    key="chat_history")
 
-conversational_rag_chain = RunnableWithMessageHistory(
-    rag_chain, 
-    lambda session_id: demo_ephemeral_chat_history,
-    input_messages_key="input",
-    history_messages_key="chat_history",
-    output_messages_key="answer"
-)
 
-def conversational_chain(query, session_id: str):
-    answer = conversational_rag_chain.invoke(
-        {"input": query},
-        config={
-            "configurable": {"session_id": session_id}
-        }
-    )
-    pprint.pprint(answer)
-    return answer
+# conversational_rag_chain = RunnableWithMessageHistory(
+#     rag_chain, 
+#     lambda session_id: demo_ephemeral_chat_history,
+#     input_messages_key="input",
+#     history_messages_key="chat_history",
+#     output_messages_key="answer"
+# )
+
+# def conversational_chain(query, session_id: str):
+#     answer = conversational_rag_chain.invoke(
+#         {"input": query},
+#         config={
+#             "configurable": {"session_id": session_id}
+#         }
+#     )
+#     pprint.pprint(answer)
+#     return answer
 
 
 paraphraser = (
@@ -204,34 +202,33 @@ paraphraser = (
 # )
 
 
-def trim_messages(chain_input):
-    stored_messages = demo_ephemeral_chat_history.messages
-    if len(stored_messages) <= 2:
-        return False
+# def trim_messages():
+#     # add memory using streamlit session state (can change to db later)+ trimmming message -  just get two latest conversation
+#     ephemeral_chat_history = StreamlitChatMessageHistory(
+#         key="buv_follow_up_memory")
+    
+#     stored_messages = ephemeral_chat_history.messages
+#     if len(stored_messages) <= 2:
+#         return False
+#     print("Trimming messages")
+#     ephemeral_chat_history.messages = stored_messages[-2:]
+#     return True
 
-    demo_ephemeral_chat_history.clear()
-
-    for message in stored_messages[-2:]:
-        demo_ephemeral_chat_history.add_message(message)
-
-    return True
-
-
-chain_with_follow_up = (
-    RunnablePassthrough.assign(messages_trimmed=trim_messages)
-    | conversational_rag_chain
-)
-
-
-def route(info):
-    if info["language"] == "Vietnamese":
-        return """We're sorry for any inconvenience; however, StarLeo can only answer questions in English. Unfortunately, Vietnamese isn't available at the moment. Thank you for your understanding!"""
-    else:
-        return chain_with_follow_up
+# chain_with_follow_up = (
+#     RunnablePassthrough.assign(messages_trimmed=trim_messages)
+#     | conversational_rag_chain
+# )
 
 
-full_chain = RunnablePassthrough.assign(
-    language=language_detection_chain) | RunnableLambda(route)
+# def route(info):
+#     if info["language"] == "Vietnamese":
+#         return """We're sorry for any inconvenience; however, StarLeo can only answer questions in English. Unfortunately, Vietnamese isn't available at the moment. Thank you for your understanding!"""
+#     else:
+#         return chain_with_follow_up
+
+
+# full_chain = RunnablePassthrough.assign(
+#     language=language_detection_chain) | RunnableLambda(route)
 
 
 def chain_with_follow_up_function(message_history):
@@ -247,6 +244,8 @@ def chain_with_follow_up_function(message_history):
     # )
     # return chain_with_follow_up
     
+    # ephemeral_chat_history = StreamlitChatMessageHistory(key="buv_follow_up_memory")
+    
     conversational_rag_chain = RunnableWithMessageHistory(
                             rag_chain, 
                             lambda session_id: message_history,
@@ -254,11 +253,14 @@ def chain_with_follow_up_function(message_history):
                             history_messages_key="chat_history",
                             output_messages_key="answer"
                             )
+    # print("Trimming history messages")
+    # ephemeral_chat_history.messages = ephemeral_chat_history.messages[-2:] if len(ephemeral_chat_history.messages) > 2 else ephemeral_chat_history.messages
+    # print("history messages:", ephemeral_chat_history.messages)
     
-    chain_with_follow_up = (
-                            RunnablePassthrough.assign(messages_trimmed=trim_messages)
-                            | conversational_rag_chain
-                            )
-    # return conversational_rag_chain
-    return chain_with_follow_up
+    # chain_with_follow_up = (
+    #                         RunnablePassthrough.assign(messages_trimmed=lambda x: trim_messages())
+    #                         | conversational_rag_chain
+    #                         )
+    return conversational_rag_chain
+    # return chain_with_follow_up
     
