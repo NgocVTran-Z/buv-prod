@@ -161,7 +161,7 @@ def get_session_history(session_id: str) -> BaseChatMessageHistory:
 
 # add memory using streamlit session state (can change to db later)+ trimmming message -  just get two latest conversation
 demo_ephemeral_chat_history = StreamlitChatMessageHistory(
-    key="buv_follow_up_memory")
+    key="chat_history")
 
 conversational_rag_chain = RunnableWithMessageHistory(
     rag_chain, 
@@ -250,14 +250,14 @@ def chain_with_follow_up_function(message_history):
                             rag_chain, 
                             lambda session_id: message_history,
                             input_messages_key="input",
-                            history_messages_key="buv_follow_up_memory",
+                            history_messages_key="chat_history",
                             output_messages_key="answer"
                             )
     
-    chain_with_follow_up = (
-                            RunnablePassthrough.assign(messages_trimmed=trim_messages)
-                            | conversational_rag_chain
-                            )
-    
-    return chain_with_follow_up
+    # chain_with_follow_up = (
+    #                         RunnablePassthrough.assign(messages_trimmed=trim_messages)
+    #                         | conversational_rag_chain
+    #                         )
+    return conversational_rag_chain
+    # return chain_with_follow_up
     

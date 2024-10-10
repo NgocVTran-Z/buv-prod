@@ -248,7 +248,8 @@ if bot_name == "Staffordshire University":
         message_history)
     fixed_answer = "For SU students:"
 else:
-    message_history = StreamlitChatMessageHistory(key="buv_follow_up_memory")
+    # message_history = StreamlitChatMessageHistory(key="buv_follow_up_memory")
+    message_history = StreamlitChatMessageHistory(key="chat_history")
     bot_engine = buv_with_direct_prompting_source_and_follow_up.chain_with_follow_up_function(
         message_history)
     fixed_answer = "For BUV students:"
