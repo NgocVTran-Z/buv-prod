@@ -175,3 +175,5 @@ test.py
 .env_
 
 .env
+
+requirements2.txt
