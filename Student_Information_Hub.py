@@ -162,6 +162,7 @@ def delete_messages_session_state():
     """
     st.session_state.pop("messages_of_sio_follow_up", None)
     st.session_state.pop("buv_follow_up_memory", None)
+    st.session_state.pop("su_follow_up_memory", None)
         
 with st.chat_message("assistant", avatar="./images/Starleo-03.png"):
     st.write("Hi, I’m StarLeo, I’m happy to assist you!")
