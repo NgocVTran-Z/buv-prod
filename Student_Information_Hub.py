@@ -324,66 +324,77 @@ with st.container():
             #     answer = None if answer == " " else answer
             # else:
             #     handled_prompt, answer = prompt, None
-            
-            st.session_state.messages_of_sio_follow_up.append(
-                {"role": "user", "content": prompt})
-            st.chat_message("user").write(prompt)
+            try:
+                st.session_state.messages_of_sio_follow_up.append(
+                    {"role": "user", "content": prompt})
+                st.chat_message("user").write(prompt)
 
-            with st.spinner("Processing data ..."):
-                with st.chat_message("assistant", avatar="./images/Starleo-13.png"):
-                    st.write(fixed_answer)
-                    language_detection = language_detection_chain.invoke(
-                        {"input": prompt})
-                    print("language_detection", language_detection)
-                    if language_detection == "Vietnamese":
-                        response = "We're sorry for any inconvenience; however, StarLeo can only answer questions in English. Unfortunately, Vietnamese isn't available at the moment. Thank you for your understanding!"
-                        st.write(response)
-                    else:
-                        # if answer:
-                        #     response = answer
-                        #     st.write(response)
-                        # else:
-                        #     stream_response = bot_engine.stream(
-                        #         {"input": handled_prompt},
-                        #         {"configurable": {"session_id": "unused"}},
-                        #     )
-                        #     print("stream_response", stream_response)
-                        #     response = st.write_stream(stream_response)
-                        
-                        paraphrased_prompt = paraphraser.invoke(prompt)
-                        # Trimming history messages
-                        print("Trimming history messages")
-                        n_history_conversations = 4
-                        message_history.messages = message_history.messages[-2*n_history_conversations:] if len(message_history.messages) > 2*n_history_conversations else message_history.messages
-                        print("history messages:", message_history.messages)
-                        
-                        stream_response = stream(bot_engine,
-                                {"input": paraphrased_prompt},
-                                {"configurable": {"session_id": "unused"}},
-                            )
-                        print("stream_response", stream_response)
-                        response = st.write_stream(stream_response)
+                with st.spinner("Processing data ..."):
+                    with st.chat_message("assistant", avatar="./images/Starleo-13.png"):
+                        st.write(fixed_answer)
+                        language_detection = language_detection_chain.invoke(
+                            {"input": prompt})
+                        print("language_detection", language_detection)
+                        if language_detection == "Vietnamese":
+                            response = "We're sorry for any inconvenience; however, StarLeo can only answer questions in English. Unfortunately, Vietnamese isn't available at the moment. Thank you for your understanding!"
+                            st.write(response)
+                        else:
+                            # if answer:
+                            #     response = answer
+                            #     st.write(response)
+                            # else:
+                            #     stream_response = bot_engine.stream(
+                            #         {"input": handled_prompt},
+                            #         {"configurable": {"session_id": "unused"}},
+                            #     )
+                            #     print("stream_response", stream_response)
+                            #     response = st.write_stream(stream_response)
+                            
+                            paraphrased_prompt = paraphraser.invoke(prompt)
+                            # Trimming history messages
+                            print("Trimming history messages")
+                            n_history_conversations = 4
+                            message_history.messages = message_history.messages[-2*n_history_conversations:] if len(message_history.messages) > 2*n_history_conversations else message_history.messages
+                            print("history messages:", message_history.messages)
+                            
+                            stream_response = stream(bot_engine,
+                                    {"input": paraphrased_prompt},
+                                    {"configurable": {"session_id": "unused"}},
+                                )
+                            print("stream_response", stream_response)
+                            response = st.write_stream(stream_response)
 
-            st.session_state.messages_of_sio_follow_up.append(
-                {"role": "assistant", "content": fixed_answer + "\n\n" + response})
-            # Create a new FAQ instance
-            new_faq = FAQ(question=prompt, answer=response, bot_type=bot_name)
-            # Add the new instance to the session
-            session.add(new_faq)
-            # Commit the session to insert the data into the table
-            session.commit()
-            session.close()
-            # except BadRequestError:
-            #     standard_message = ("Thank you for your question. For further assistance, please contact our Student Information Office via email at studentservice@buv.edu.vn or by phone at 0936 376 136.")
-            #     st.markdown(standard_message)
+                st.session_state.messages_of_sio_follow_up.append(
+                    {"role": "assistant", "content": fixed_answer + "\n\n" + response})
+                # Create a new FAQ instance
+                new_faq = FAQ(question=prompt, answer=response, bot_type=bot_name)
+                # Add the new instance to the session
+                session.add(new_faq)
+                # Commit the session to insert the data into the table
+                session.commit()
+                # session.close()
+                # except BadRequestError:
+                #     standard_message = ("Thank you for your question. For further assistance, please contact our Student Information Office via email at studentservice@buv.edu.vn or by phone at 0936 376 136.")
+                #     st.markdown(standard_message)
+                    
+                #     # Create a new FAQ instance
+                #     new_faq = FAQ(question=prompt, answer=standard_message, bot_type=bot_name)
+                #     # Add the new instance to the session
+                #     session.add(new_faq)
+                #     # Commit the session to insert the data into the table
+                #     session.commit()
+            except (BadRequestError, ValueError):
+                standard_message = ("For further assistance, please contact our Student Information Office via email at studentservice@buv.edu.vn or by phone at 0936 376 136.")
+                st.markdown(standard_message)
                 
-            #     # Create a new FAQ instance
-            #     new_faq = FAQ(question=prompt, answer=standard_message, bot_type=bot_name)
-            #     # Add the new instance to the session
-            #     session.add(new_faq)
-            #     # Commit the session to insert the data into the table
-            #     session.commit()
-                
+                # Create a new FAQ instance
+                new_faq = FAQ(question=prompt, answer=standard_message, bot_type=bot_name)
+                # Add the new instance to the session
+                session.add(new_faq)
+                # Commit the session to insert the data into the table
+                # session.commit()
+            finally:
+                session.close()
         else:
             try:
                 st.session_state.messages_of_sio_follow_up.append(
@@ -436,9 +447,9 @@ with st.container():
                 # Commit the session to insert the data into the table
                 session.commit()
                 
-                session.close()
-            except BadRequestError:
-                standard_message = ("Thank you for your question. For further assistance, please contact our Student Information Office via email at studentservice@buv.edu.vn or by phone at 0936 376 136.")
+                # session.close()
+            except (BadRequestError, ValueError):
+                standard_message = ("For further assistance, please contact our Student Information Office via email at studentservice@buv.edu.vn or by phone at 0936 376 136.")
                 st.markdown(standard_message)
                 
                 # Create a new FAQ instance
@@ -447,6 +458,7 @@ with st.container():
                 session.add(new_faq)
                 # Commit the session to insert the data into the table
                 session.commit()
+            finally:
                 session.close()
 
     # st.session_state.messages_of_sio_follow_up.append(
