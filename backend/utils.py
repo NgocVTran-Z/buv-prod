@@ -170,3 +170,14 @@ language_detection_chain = (
     | azure_openai
     | StrOutputParser()
 )
+
+
+paraphraser = (
+    PromptTemplate.from_template("""Please paraphrase the input in the given text to a question or a statement that can be understood without the context.)
+                                 <text>
+                                {input}
+                                </text>
+                                """)
+    | azure_openai
+    | StrOutputParser()
+)

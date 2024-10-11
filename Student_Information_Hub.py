@@ -1,6 +1,7 @@
 from backend import buv_with_direct_prompting_source_and_follow_up, su_with_direct_prompting_source_and_follow_up
-from backend.buv_with_direct_prompting_source_and_follow_up import paraphraser
-from backend.utils import language_detection_chain, azure_openai, text_embedding_3large, retriever, FAQ
+from backend.utils import paraphraser
+# from backend.utils import language_detection_chain, azure_openai, text_embedding_3large, retriever, FAQ
+from backend.utils import language_detection_chain, azure_openai, text_embedding_3large, FAQ
 from upload_file import upload_to_blob_storage, processing_uploaded_file
 from langchain_core.output_parsers import StrOutputParser
 from langchain_community.chat_message_histories import (
@@ -315,15 +316,13 @@ with st.container():
     if prompt:
         # If the bot_engine is Staffordshire University, handle the prompt
         if bot_name == "Staffordshire University":
-            # try:
-            # retrieved = retriever.get_relevant_documents(prompt)
-            retrieved = retriever.invoke(prompt)
+            # retrieved = retriever.invoke(prompt)
 
-            if retrieved:
-                handled_prompt, answer = retrieved[0].page_content, retrieved[0].metadata['answer']
-                answer = None if answer == " " else answer
-            else:
-                handled_prompt, answer = prompt, None
+            # if retrieved:
+            #     handled_prompt, answer = retrieved[0].page_content, retrieved[0].metadata['answer']
+            #     answer = None if answer == " " else answer
+            # else:
+            #     handled_prompt, answer = prompt, None
             
             st.session_state.messages_of_sio_follow_up.append(
                 {"role": "user", "content": prompt})
@@ -339,23 +338,30 @@ with st.container():
                         response = "We're sorry for any inconvenience; however, StarLeo can only answer questions in English. Unfortunately, Vietnamese isn't available at the moment. Thank you for your understanding!"
                         st.write(response)
                     else:
-                        if answer:
-                            response = answer
-                            st.write(response)
-                        else:
-                        # print(
-                        #     buv_with_direct_prompting_source_and_follow_up.demo_ephemeral_chat_history.messages)
-                        # context_q_chain = buv_with_direct_prompting_source_and_follow_up.contextualize_q_prompt | gpt_4o | StrOutputParser()
-                        # q_with_context = context_q_chain.invoke({"input": prompt,
-                        #                                          "chat_history": buv_with_direct_prompting_source_and_follow_up.demo_ephemeral_chat_history.messages})
-                        # print(
-                        #     f"Latest question: {prompt} \nNew query: {q_with_context}")
-                            stream_response = bot_engine.stream(
-                                {"input": handled_prompt},
+                        # if answer:
+                        #     response = answer
+                        #     st.write(response)
+                        # else:
+                        #     stream_response = bot_engine.stream(
+                        #         {"input": handled_prompt},
+                        #         {"configurable": {"session_id": "unused"}},
+                        #     )
+                        #     print("stream_response", stream_response)
+                        #     response = st.write_stream(stream_response)
+                        
+                        paraphrased_prompt = paraphraser.invoke(prompt)
+                        # Trimming history messages
+                        print("Trimming history messages")
+                        n_history_conversations = 4
+                        message_history.messages = message_history.messages[-2*n_history_conversations:] if len(message_history.messages) > 2*n_history_conversations else message_history.messages
+                        print("history messages:", message_history.messages)
+                        
+                        stream_response = stream(bot_engine,
+                                {"input": paraphrased_prompt},
                                 {"configurable": {"session_id": "unused"}},
                             )
-                            print("stream_response", stream_response)
-                            response = st.write_stream(stream_response)
+                        print("stream_response", stream_response)
+                        response = st.write_stream(stream_response)
 
             st.session_state.messages_of_sio_follow_up.append(
                 {"role": "assistant", "content": fixed_answer + "\n\n" + response})
@@ -365,6 +371,7 @@ with st.container():
             session.add(new_faq)
             # Commit the session to insert the data into the table
             session.commit()
+            session.close()
             # except BadRequestError:
             #     standard_message = ("Thank you for your question. For further assistance, please contact our Student Information Office via email at studentservice@buv.edu.vn or by phone at 0936 376 136.")
             #     st.markdown(standard_message)
@@ -427,6 +434,8 @@ with st.container():
                 session.add(new_faq)
                 # Commit the session to insert the data into the table
                 session.commit()
+                
+                session.close()
             except BadRequestError:
                 standard_message = ("Thank you for your question. For further assistance, please contact our Student Information Office via email at studentservice@buv.edu.vn or by phone at 0936 376 136.")
                 st.markdown(standard_message)
@@ -437,6 +446,7 @@ with st.container():
                 session.add(new_faq)
                 # Commit the session to insert the data into the table
                 session.commit()
+                session.close()
 
     # st.session_state.messages_of_sio_follow_up.append(
     #     {"role": "user", "content": prompt})
