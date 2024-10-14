@@ -350,15 +350,19 @@ with st.container():
                             #     print("stream_response", stream_response)
                             #     response = st.write_stream(stream_response)
                             
-                            paraphrased_prompt = paraphraser.invoke(prompt)
+                            # paraphrased_prompt = paraphraser.invoke(prompt)
                             # Trimming history messages
                             print("Trimming history messages")
                             n_history_conversations = 4
                             message_history.messages = message_history.messages[-2*n_history_conversations:] if len(message_history.messages) > 2*n_history_conversations else message_history.messages
                             print("history messages:", message_history.messages)
                             
+                            # stream_response = stream(bot_engine,
+                            #         {"input": paraphrased_prompt},
+                            #         {"configurable": {"session_id": "unused"}},
+                            #     )
                             stream_response = stream(bot_engine,
-                                    {"input": paraphrased_prompt},
+                                    {"input": prompt},
                                     {"configurable": {"session_id": "unused"}},
                                 )
                             print("stream_response", stream_response)
@@ -423,15 +427,19 @@ with st.container():
                             #     {"configurable": {"session_id": "unused"}},
                             # )
                             
-                            paraphrased_prompt = paraphraser.invoke(prompt)
+                            # paraphrased_prompt = paraphraser.invoke(prompt)
                             # Trimming history messages
                             print("Trimming history messages")
                             n_history_conversations = 4
                             message_history.messages = message_history.messages[-2*n_history_conversations:] if len(message_history.messages) > 2*n_history_conversations else message_history.messages
                             print("history messages:", message_history.messages)
                             
+                            # stream_response = stream(bot_engine,
+                            #     {"input": paraphrased_prompt},
+                            #     {"configurable": {"session_id": "unused"}},
+                            # )
                             stream_response = stream(bot_engine,
-                                {"input": paraphrased_prompt},
+                                {"input": prompt},
                                 {"configurable": {"session_id": "unused"}},
                             )
                             print("stream_response", stream_response)
