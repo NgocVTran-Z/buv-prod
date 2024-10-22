@@ -331,42 +331,52 @@ with st.container():
 
                 with st.spinner("Processing data ..."):
                     with st.chat_message("assistant", avatar="./images/Starleo-13.png"):
-                        st.write(fixed_answer)
-                        language_detection = language_detection_chain.invoke(
-                            {"input": prompt})
-                        print("language_detection", language_detection)
-                        if language_detection == "Vietnamese":
-                            response = "We're sorry for any inconvenience; however, StarLeo can only answer questions in English. Unfortunately, Vietnamese isn't available at the moment. Thank you for your understanding!"
-                            st.write(response)
-                        else:
-                            # if answer:
-                            #     response = answer
-                            #     st.write(response)
-                            # else:
-                            #     stream_response = bot_engine.stream(
-                            #         {"input": handled_prompt},
-                            #         {"configurable": {"session_id": "unused"}},
-                            #     )
-                            #     print("stream_response", stream_response)
-                            #     response = st.write_stream(stream_response)
-                            
-                            # paraphrased_prompt = paraphraser.invoke(prompt)
-                            # Trimming history messages
-                            print("Trimming history messages")
-                            n_history_conversations = 4
-                            message_history.messages = message_history.messages[-2*n_history_conversations:] if len(message_history.messages) > 2*n_history_conversations else message_history.messages
-                            print("history messages:", message_history.messages)
-                            
-                            # stream_response = stream(bot_engine,
-                            #         {"input": paraphrased_prompt},
-                            #         {"configurable": {"session_id": "unused"}},
-                            #     )
-                            stream_response = stream(bot_engine,
-                                    {"input": prompt},
-                                    {"configurable": {"session_id": "unused"}},
-                                )
-                            print("stream_response", stream_response)
-                            response = st.write_stream(stream_response)
+                        ask_relevant_question = True
+                        keywords = ["Stirling", "University of London", "UoL", "IFP", "Foundation", "Arts University Bournemouth", "Bournemouth", "AUB", "Staffordshire"]
+                        for keyword in keywords:
+                            if keyword in prompt:
+                                response = "Thank you for your question. Unfortunately, I can only provide answers related to British University Vietnam. Please reach out to our Student Information Office at studentservice@buv.edu.vn for further assistance."
+                                st.write(response)
+                                ask_relevant_question = False
+                                break
+                        
+                        if ask_relevant_question:
+                            st.write(fixed_answer)
+                            language_detection = language_detection_chain.invoke(
+                                {"input": prompt})
+                            print("language_detection", language_detection)
+                            if language_detection == "Vietnamese":
+                                response = "We're sorry for any inconvenience; however, our chatbot can only answer questions in English. Unfortunately, Vietnamese isn't available at the moment. Thank you for your understanding!"
+                                st.write(response)
+                            else:
+                                # if answer:
+                                #     response = answer
+                                #     st.write(response)
+                                # else:
+                                #     stream_response = bot_engine.stream(
+                                #         {"input": handled_prompt},
+                                #         {"configurable": {"session_id": "unused"}},
+                                #     )
+                                #     print("stream_response", stream_response)
+                                #     response = st.write_stream(stream_response)
+                                
+                                # paraphrased_prompt = paraphraser.invoke(prompt)
+                                # Trimming history messages
+                                print("Trimming history messages")
+                                n_history_conversations = 4
+                                message_history.messages = message_history.messages[-2*n_history_conversations:] if len(message_history.messages) > 2*n_history_conversations else message_history.messages
+                                print("history messages:", message_history.messages)
+                                
+                                # stream_response = stream(bot_engine,
+                                #         {"input": paraphrased_prompt},
+                                #         {"configurable": {"session_id": "unused"}},
+                                #     )
+                                stream_response = stream(bot_engine,
+                                        {"input": prompt},
+                                        {"configurable": {"session_id": "unused"}},
+                                    )
+                                print("stream_response", stream_response)
+                                response = st.write_stream(stream_response)
 
                 st.session_state.messages_of_sio_follow_up.append(
                     {"role": "assistant", "content": fixed_answer + "\n\n" + response})
@@ -407,44 +417,55 @@ with st.container():
 
                 with st.spinner("Processing data ..."):
                     with st.chat_message("assistant", avatar="./images/Starleo-13.png"):
-                        st.write(fixed_answer)
-                        language_detection = language_detection_chain.invoke(
-                            {"input": prompt})
-                        print("language_detection", language_detection)
-                        if language_detection == "Vietnamese":
-                            response = "We're sorry for any inconvenience; however, StarLeo can only answer questions in English. Unfortunately, Vietnamese isn't available at the moment. Thank you for your understanding!"
-                            st.write(response)
-                        else:
-                            # print(
-                            #     buv_with_direct_prompting_source_and_follow_up.demo_ephemeral_chat_history.messages)
-                            # context_q_chain = buv_with_direct_prompting_source_and_follow_up.contextualize_q_prompt | gpt_4o | StrOutputParser()
-                            # q_with_context = context_q_chain.invoke({"input": prompt,
-                            #                                          "chat_history": buv_with_direct_prompting_source_and_follow_up.demo_ephemeral_chat_history.messages})
-                            # print(
-                            #     f"Latest question: {prompt} \nNew query: {q_with_context}")
-                            # stream_response = bot_engine.stream(
-                            #     {"input": prompt},
-                            #     {"configurable": {"session_id": "unused"}},
-                            # )
-                            
-                            # paraphrased_prompt = paraphraser.invoke(prompt)
-                            # Trimming history messages
-                            print("Trimming history messages")
-                            n_history_conversations = 4
-                            message_history.messages = message_history.messages[-2*n_history_conversations:] if len(message_history.messages) > 2*n_history_conversations else message_history.messages
-                            print("history messages:", message_history.messages)
-                            
-                            # stream_response = stream(bot_engine,
-                            #     {"input": paraphrased_prompt},
-                            #     {"configurable": {"session_id": "unused"}},
-                            # )
-                            stream_response = stream(bot_engine,
-                                {"input": prompt},
-                                {"configurable": {"session_id": "unused"}},
-                            )
-                            print("stream_response", stream_response)
-                            response = st.write_stream(stream_response)
-                            # response = st.write_stream(stream_response['answer'])
+                        # Avoid answer irrelevant questions of other awarding bodies
+                        ask_relevant_question = True
+                        keywords = ["Stirling", "University of London", "UoL", "IFP", "Foundation", "Arts University Bournemouth", "Bournemouth", "AUB", "Staffordshire", "SU"]
+                        for keyword in keywords:
+                            if keyword in prompt:
+                                response = "Thank you for your question. Unfortunately, I can only provide answers related to British University Vietnam. Please reach out to our Student Information Office at studentservice@buv.edu.vn for further assistance."
+                                st.write(response)
+                                ask_relevant_question = False
+                                break
+                        
+                        if ask_relevant_question:
+                            st.write(fixed_answer)
+                            language_detection = language_detection_chain.invoke(
+                                {"input": prompt})
+                            print("language_detection", language_detection)
+                            if language_detection == "Vietnamese":
+                                response = "We're sorry for any inconvenience; however, our chatbot can only answer questions in English. Unfortunately, Vietnamese isn't available at the moment. Thank you for your understanding!"
+                                st.write(response)
+                            else:
+                                # print(
+                                #     buv_with_direct_prompting_source_and_follow_up.demo_ephemeral_chat_history.messages)
+                                # context_q_chain = buv_with_direct_prompting_source_and_follow_up.contextualize_q_prompt | gpt_4o | StrOutputParser()
+                                # q_with_context = context_q_chain.invoke({"input": prompt,
+                                #                                          "chat_history": buv_with_direct_prompting_source_and_follow_up.demo_ephemeral_chat_history.messages})
+                                # print(
+                                #     f"Latest question: {prompt} \nNew query: {q_with_context}")
+                                # stream_response = bot_engine.stream(
+                                #     {"input": prompt},
+                                #     {"configurable": {"session_id": "unused"}},
+                                # )
+                                
+                                # paraphrased_prompt = paraphraser.invoke(prompt)
+                                # Trimming history messages
+                                print("Trimming history messages")
+                                n_history_conversations = 4
+                                message_history.messages = message_history.messages[-2*n_history_conversations:] if len(message_history.messages) > 2*n_history_conversations else message_history.messages
+                                print("history messages:", message_history.messages)
+                                
+                                # stream_response = stream(bot_engine,
+                                #     {"input": paraphrased_prompt},
+                                #     {"configurable": {"session_id": "unused"}},
+                                # )
+                                stream_response = stream(bot_engine,
+                                    {"input": prompt},
+                                    {"configurable": {"session_id": "unused"}},
+                                )
+                                print("stream_response", stream_response)
+                                response = st.write_stream(stream_response)
+                                # response = st.write_stream(stream_response['answer'])
 
                 st.session_state.messages_of_sio_follow_up.append(
                     {"role": "assistant", "content": fixed_answer + "\n\n" + response})
